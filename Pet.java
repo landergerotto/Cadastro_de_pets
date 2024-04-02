@@ -1,3 +1,9 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.Period;
+
 public class Pet {
     private String nome;
     private String tipo;
