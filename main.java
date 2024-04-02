@@ -14,6 +14,7 @@ public class main {
         pet.setTipo("Gatito");
         
         Tutor tuts = new Tutor(0, "denis", 2004, 12, 12, "bem ali");
-        // tu
+        tuts.AddPet(pet);
+        System.out.println(tuts);
     }
 }
