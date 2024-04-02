@@ -12,6 +12,26 @@ public class Tutor {
     private String endereco;
     private ArrayList<Pet> pets;
 
+    public Tutor(int codTutor, String nome, LocalDate nasc, String endereco)
+    {
+        this.codTutor = codTutor;
+        this.nome = nome;
+        this.nascimento = nasc;
+        this.endereco = endereco;
+
+        this.pets = new ArrayList<Pet>();
+    }
+
+    public Tutor(int codTutor, String nome, int yyyy, int mm, int dd, String endereco)
+    {
+        this.codTutor = codTutor;
+        this.nome = nome;
+        this.nascimento = LocalDate.of(yyyy, mm, dd);
+        this.endereco = endereco;
+
+        this.pets = new ArrayList<Pet>();
+    }
+
     public int getCodTutor() {
         return codTutor;
     }
@@ -56,9 +76,28 @@ public class Tutor {
         this.pets = pets;
     }
 
+    public void AddPet(Pet pet) {
+        this.pets.add(pet);
+    }
+
+    public void RemovePet(Pet pet) {
+        this.pets.remove(pet);
+    }
+
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+        String name = String.format("Nome...........: %s\n", this.nome);  
+        String date = String.format("Data nascimento: %s\n", this.nascimento.toString());
+        String ende = String.format("Endereço.......: %s\n", this.endereco);
+        String str1 = name + date + ende;
+        String str2 = "";
+
+        for(Pet pet : this.pets)
+        {
+            String petStr = String.format("- Nome do pet: %s; Tipo: %s.\n", pet.getNome(), pet.getTipo());
+            str2 = str2 + petStr;
+        }
+
+        return str1 + str2;
     }
 }

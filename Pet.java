@@ -26,6 +26,6 @@ public class Pet {
     }
 
     public void setTipo(String novoTipo){
-        this.nome = novoTipo;
+        this.tipo = novoTipo;
     }
 }
