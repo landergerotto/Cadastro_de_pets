@@ -86,15 +86,16 @@ public class Tutor {
 
     @Override
     public String toString() {
-        String name = String.format("Nome...........: %s\n", this.nome);  
-        String date = String.format("Data nascimento: %s\n", this.nascimento.toString());
-        String ende = String.format("Endereço.......: %s\n", this.endereco);
-        String str1 = name + date + ende;
+        String cod = String.format("Cod. do tutor %d\n", this.codTutor);  
+        String name = String.format("  Nome...........: %s\n", this.nome);  
+        String date = String.format("  Data nascimento: %s\n", this.nascimento.toString());
+        String ende = String.format("  Endereço.......: %s\n", this.endereco);
+        String str1 = cod + name + date + ende;
         String str2 = "";
 
         for(Pet pet : this.pets)
         {
-            String petStr = String.format("- Nome do pet: %s; Tipo: %s.\n", pet.getNome(), pet.getTipo());
+            String petStr = String.format("  - Nome do pet: %s; Tipo: %s.\n", pet.getNome(), pet.getTipo());
             str2 = str2 + petStr;
         }
 
