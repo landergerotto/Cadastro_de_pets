@@ -8,6 +8,7 @@ public class PetShop {
 
     public static ArrayList<Tutor> tutores = new ArrayList<Tutor>();
     public static int lastid = 0;
+    public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         while(true) {
@@ -28,7 +29,6 @@ public class PetShop {
 
     public static void Cadastrar() {
         System.out.println("CHAMOI");
-        Scanner scanner = new Scanner(System.in);
     
         System.out.println("Digite nome do tutor (vazio encerra cadastro tutor):");
         System.out.print("> ");
@@ -85,10 +85,8 @@ public class PetShop {
     }
 
     public static void ScanOpcao() {
-        Scanner scan = new Scanner(System.in);
-        String opcao = scan.nextLine();
+        String opcao = scanner.nextLine();
         System.out.println("Opção escolhida: " + opcao);
-        scan.close();
 
         switch(opcao) {
             case "c":
