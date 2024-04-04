@@ -33,26 +33,33 @@ public class PetShop {
         System.out.print("> ");
         String nome = scanner.nextLine();
     
-        System.out.println("Digite dia (dd), mês (mm) e ano (aaaa) de nascimento do tutor: \n" +
-                "(separados por espaços)");
-        System.out.print("> ");
-        String data = scanner.nextLine();
-        if (data.isEmpty()) {
-
-            return;
-        }
-    
-        String[] dateParts = data.split(" ");
         int ano, mes, dia;
-        try {
+        while(true) {
+            System.out.println("Digite dia (dd), mês (mm) e ano (aaaa) de nascimento do tutor: \n" +
+            "(separados por espaços)");
+            System.out.print("> ");
+
+            String data = scanner.nextLine();
+
+            while(data.isEmpty() || data.matches("[a-zA-Z]+")) {
+                System.out.println("Data inválida! Por favor, digite corretamente");
+                System.out.print("> ");
+                data = scanner.nextLine();   
+            }
+            
+            String[] dateParts = data.split(" ");
+            
             ano = Integer.parseInt(dateParts[2]);
             mes = Integer.parseInt(dateParts[1]);
             dia = Integer.parseInt(dateParts[0]);
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid date format.");
-            return;
+
+            if(ano < LocalDate.now().getYear() + 1 && ano > 1999 && mes > 0 && mes < 13 && dia > 0 && dia < 32) {   
+                break;
+            }
+            else
+                System.out.println("Data inválida!");
         }
-    
+
         System.out.println("Digite endereço do tutor/pet: ");
         System.out.print("> ");
         String endereco = scanner.nextLine();
@@ -108,7 +115,7 @@ public class PetShop {
             System.out.print("> ");
             cod = scanner.nextLine();
         }
-        
+
         for (Tutor tutor : tutores) {
             if(tutor.getCodTutor() == Integer.parseInt(cod)) {
                 System.out.println("--- Tutor localizado ---");
@@ -125,7 +132,7 @@ public class PetShop {
         System.out.print("> ");
         String id = scanner.nextLine();
 
-        while(id.isEmpty()){
+        while(id.isEmpty() || id.matches("[a-zA-Z]+")){
             System.out.println("Código de tutor inválido\nPor favor, digite o código do tutor: ");
             System.out.print("> ");
             id = scanner.nextLine();
@@ -133,7 +140,7 @@ public class PetShop {
 
         for (Tutor tutor : tutores) {
             if(tutor.getCodTutor() == Integer.parseInt(id)) {
-                tutor.setPets(new ArrayList<Pet>());
+                tutor.RemoveAllPets();
                 tutores.remove(tutor);
                 return;
             }
@@ -172,7 +179,5 @@ public class PetShop {
                 System.out.println("Opção inválida");
                 break;
           }
-    } 
-
-
+    }
 }
