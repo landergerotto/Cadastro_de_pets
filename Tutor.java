@@ -84,9 +84,13 @@ public class Tutor {
         this.pets.remove(pet);
     }
 
+    public void RemoveAllPets() {
+        this.pets.clear();
+    }
+
     @Override
     public String toString() {
-        String cod = String.format("Cod. do tutor %d\n", this.codTutor);  
+        String cod = String.format("Cod. do tutor: %d\n", this.codTutor);  
         String name = String.format("  Nome...........: %s\n", this.nome);  
         String date = String.format("  Data nascimento: %s\n", this.nascimento.toString());
         String ende = String.format("  Endereço.......: %s\n", this.endereco);
