@@ -84,6 +84,10 @@ public class Tutor {
         this.pets.remove(pet);
     }
 
+    public void RemoveAllPets() {
+        this.pets.clear();
+    }
+
     @Override
     public String toString() {
         String cod = String.format("Cod. do tutor: %d\n", this.codTutor);  
