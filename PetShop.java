@@ -4,19 +4,25 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.Period;
 
+// Classe principal que representa um pet shop
 public class PetShop {
-
+    // ArrayList para armazenar os tutores cadastrados
     public static ArrayList<Tutor> tutores = new ArrayList<Tutor>();
+    // Variável para armazenar o último ID de tutor cadastrado
     public static int lastid = 1;
+    // Objeto Scanner para entrada de dados do usuário
     public static Scanner scanner = new Scanner(System.in);
 
+    // Método principal
     public static void main(String[] args) {
+        PopularCadastro(); // Popula o cadastro com alguns dados iniciais
         while(true) {
-            PrintOpcoes();
-            ScanOpcao();
+            PrintOpcoes(); // Exibe as opções do menu
+            ScanOpcao(); // Captura e processa a opção do usuário
         }
     }
 
+    // Método para imprimir as opções do menu
     public static void PrintOpcoes() {
         System.out.println("***** ESCOLHA UMA OPÇÃO *****\n" + 
             "c: cadastrar tutor + pet(s)\n" +
@@ -27,13 +33,15 @@ public class PetShop {
         );
     } 
 
+    // Método para cadastrar um novo tutor e seus pets
     public static void Cadastrar() {
-    
+        // Solicita informações do tutor
         System.out.println("Digite nome do tutor (vazio encerra cadastro tutor):");
         System.out.print("> ");
         String nome = scanner.nextLine();
-    
+
         int ano, mes, dia;
+        // Solicita a data de nascimento do tutor e valida
         while(true) {
             System.out.println("Digite dia (dd), mês (mm) e ano (aaaa) de nascimento do tutor: \n" +
             "(separados por espaços)");
@@ -70,8 +78,10 @@ public class PetShop {
         int codTutor = lastid;
         lastid++;
     
+        // Cria um novo tutor com as informações fornecidas
         Tutor tutor = new Tutor(codTutor, nome, ano, mes, dia, endereco);
         
+        // Solicita informações dos pets e os associa ao tutor
         while(true) {
             System.out.println("Digite nome do pet (vazio encerra cadastro pet): ");
             System.out.print("> ");
@@ -94,9 +104,11 @@ public class PetShop {
             tutor.AddPet(pet);
         }
 
+        // Adiciona o tutor cadastrado à lista de tutores
         tutores.add(tutor);
     }
 
+    // Método para imprimir o cadastro de tutores e seus pets
     public static void ImprimirCadastro() {
         System.out.println("--- CADASTRO DE TUTORES E PETS ------------------------------------------------------");
         for (Tutor tutor : tutores) {
@@ -105,6 +117,7 @@ public class PetShop {
         System.out.println("-------------------------------------------------------------------------------------");
     }
 
+    // Método para buscar pets por código de tutor
     public static void BuscarPet() {
         System.out.println("Digite codigo do tutor a ser localizado");
         System.out.print("> ");
@@ -127,6 +140,7 @@ public class PetShop {
         System.out.println("--- Tutor não foi localizado ---");
     }
 
+    // Método para excluir todos os pets associados a um tutor
     public static void ExcluirPet() {
         System.out.println("Digite o código do tutor: ");
         System.out.print("> ");
@@ -140,8 +154,8 @@ public class PetShop {
 
         for (Tutor tutor : tutores) {
             if(tutor.getCodTutor() == Integer.parseInt(id)) {
-                tutor.RemoveAllPets();
-                tutores.remove(tutor);
+                tutor.RemoveAllPets(); // Remove todos os pets do tutor
+                tutores.remove(tutor); // Remove o tutor da lista de tutores
                 return;
             }
         }
@@ -149,6 +163,7 @@ public class PetShop {
         System.out.println("Tutor não encontrado!!!");
     }
 
+    // Método para capturar a opção do usuário e executar a ação correspondente
     public static void ScanOpcao() {
         String opcao = scanner.nextLine();
         System.out.println("Opção escolhida: " + opcao);
@@ -179,5 +194,22 @@ public class PetShop {
                 System.out.println("Opção inválida");
                 break;
           }
+    }
+
+    // Método para popular o cadastro com alguns dados iniciais
+    public static void PopularCadastro() {
+        Tutor tuts = new Tutor(lastid, "Maria Antonela", 2000, 12, 12, "R. Bem Ali");
+        tuts.AddPet(new Pet("Bob", "Cachorro"));
+        tuts.AddPet(new Pet("Luna", "Gato"));
+        lastid++;
+
+        Tutor tuts2 = new Tutor(lastid, "Super Marcio", 2000, 06, 10, "R. Bem Longe");
+        tuts2.AddPet(new Pet("Kiara", "Gato"));
+        tuts2.AddPet(new Pet("Priquito", "Papagaio"));
+        lastid++;
+
+        // Adiciona os tutores populados à lista de tutores
+        tutores.add(tuts);
+        tutores.add(tuts2);
     }
 }
