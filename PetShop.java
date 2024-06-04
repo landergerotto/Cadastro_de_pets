@@ -1,215 +1,208 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.io.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.Period;
 
-// Classe principal que representa um pet shop
 public class PetShop {
-    // ArrayList para armazenar os tutores cadastrados
-    public static ArrayList<Tutor> tutores = new ArrayList<Tutor>();
-    // Variável para armazenar o último ID de tutor cadastrado
+    public static ArrayList<Tutor> tutores = new ArrayList<>();
     public static int lastid = 1;
-    // Objeto Scanner para entrada de dados do usuário
     public static Scanner scanner = new Scanner(System.in);
+    private static final String FILE_NAME = "cadastro.dat";
 
-    // Método principal
     public static void main(String[] args) {
-        PopularCadastro(); // Popula o cadastro com alguns dados iniciais
-        while(true) {
-            PrintOpcoes(); // Exibe as opções do menu
-            ScanOpcao(); // Captura e processa a opção do usuário
+        carregarDados();
+        PopularCadastro();
+
+        while (true) {
+            PrintOpcoes();
+            ScanOpcao();
         }
     }
 
-    // Método para imprimir as opções do menu
     public static void PrintOpcoes() {
-        System.out.println("***** ESCOLHA UMA OPÇÃO *****\n" + 
+        System.out.println("***** ESCOLHA UMA OPÇÃO *****\n" +
             "c: cadastrar tutor + pet(s)\n" +
             "i: imprimir cadastro\n" +
             "b: buscar pets por codigo tutor\n" +
             "e: excluir pets por codigo tutor\n" +
             "x: encerrar."
         );
-    } 
+    }
 
-    // Método para cadastrar um novo tutor e seus pets
     public static void Cadastrar() {
-        // Solicita informações do tutor
         System.out.println("Digite nome do tutor (vazio encerra cadastro tutor):");
         System.out.print("> ");
         String nome = scanner.nextLine();
-
-        int ano, mes, dia;
-        // Solicita a data de nascimento do tutor e valida
-        while(true) {
-            System.out.println("Digite dia (dd), mês (mm) e ano (aaaa) de nascimento do tutor: \n" +
-            "(separados por espaços)");
-            System.out.print("> ");
-
-            String data = scanner.nextLine();
-
-            while(data.isEmpty() || data.matches("[a-zA-Z]+")) {
-                System.out.println("Data inválida! Por favor, digite corretamente");
-                System.out.print("> ");
-                data = scanner.nextLine();   
-            }
-            
-            String[] dateParts = data.split(" ");
-            
-            ano = Integer.parseInt(dateParts[2]);
-            mes = Integer.parseInt(dateParts[1]);
-            dia = Integer.parseInt(dateParts[0]);
-
-            if(ano < LocalDate.now().getYear() + 1 && ano > 1999 && mes > 0 && mes < 13 && dia > 0 && dia < 32) {   
-                break;
-            }
-            else
-                System.out.println("Data inválida!");
+        if (nome.isEmpty()) {
+            return;
         }
 
-        System.out.println("Digite endereço do tutor/pet: ");
+        int ano, mes, dia;
+        while (true) {
+            System.out.println("Digite dia (dd), mês (mm) e ano (aaaa) de nascimento do tutor (separados por espaços):");
+            System.out.print("> ");
+            String data = scanner.nextLine();
+
+            if (!data.matches("\\d{2} \\d{2} \\d{4}")) {
+                System.out.println("Data inválida! Por favor, digite corretamente");
+                continue;
+            }
+
+            String[] dateParts = data.split(" ");
+            try {
+                dia = Integer.parseInt(dateParts[0]);
+                mes = Integer.parseInt(dateParts[1]);
+                ano = Integer.parseInt(dateParts[2]);
+
+                LocalDate nascimento = LocalDate.of(ano, mes, dia);
+                if (nascimento.isAfter(LocalDate.now()) || ano < 1900) {
+                    System.out.println("Data inválida!");
+                } else {
+                    break;
+                }
+            } catch (Exception e) {
+                System.out.println("Data inválida! Por favor, digite corretamente");
+            }
+        }
+
+        System.out.println("Digite endereço do tutor/pet:");
         System.out.print("> ");
         String endereco = scanner.nextLine();
         if (endereco.isEmpty()) {
             return;
         }
-    
-        int codTutor = lastid;
-        lastid++;
-    
-        // Cria um novo tutor com as informações fornecidas
+
+        int codTutor = lastid++;
         Tutor tutor = new Tutor(codTutor, nome, ano, mes, dia, endereco);
-        
-        // Solicita informações dos pets e os associa ao tutor
-        while(true) {
-            System.out.println("Digite nome do pet (vazio encerra cadastro pet): ");
+
+        while (true) {
+            System.out.println("Digite nome do pet (vazio encerra cadastro pet):");
             System.out.print("> ");
             String nomePet = scanner.nextLine();
             if (nomePet.isEmpty()) {
                 break;
             }
-            
-            System.out.println("Digite tipo do pet: ");
+
+            System.out.println("Digite tipo do pet:");
             System.out.print("> ");
             String tipoPet = scanner.nextLine();
-
-            while(tipoPet.isEmpty()){
-                System.out.println("Tipo de pet inválido\nPor favor, digite tipo do pet: ");
-                System.out.print("> ");
-                tipoPet = scanner.nextLine();
+            if (tipoPet.isEmpty()) {
+                System.out.println("Tipo de pet inválido");
+                continue;
             }
-            
-            Pet pet = new Pet(nomePet, tipoPet);   
-            tutor.AddPet(pet);
+
+            System.out.println("Digite a data de nascimento do pet (dd mm aaaa):");
+            System.out.print("> ");
+            String petData = scanner.nextLine();
+            if (!petData.matches("\\d{2} \\d{2} \\d{4}")) {
+                System.out.println("Data inválida! Por favor, digite corretamente");
+                continue;
+            }
+
+            String[] petDateParts = petData.split(" ");
+            try {
+                int diaPet = Integer.parseInt(petDateParts[0]);
+                int mesPet = Integer.parseInt(petDateParts[1]);
+                int anoPet = Integer.parseInt(petDateParts[2]);
+                LocalDate nascPet = LocalDate.of(anoPet, mesPet, diaPet);
+
+                Pet pet = new Pet(nomePet, tipoPet, nascPet);
+                tutor.AddPet(pet);
+            } catch (Exception e) {
+                System.out.println("Data inválida! Por favor, digite corretamente");
+            }
         }
 
-        // Adiciona o tutor cadastrado à lista de tutores
         tutores.add(tutor);
+        salvarDados();
     }
 
-    // Método para imprimir o cadastro de tutores e seus pets
     public static void ImprimirCadastro() {
         System.out.println("--- CADASTRO DE TUTORES E PETS ------------------------------------------------------");
         for (Tutor tutor : tutores) {
-            System.out.println(tutor);
+            if (!tutor.isDeletado()) {
+                System.out.println(tutor);
+            }
         }
-        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------------------------");
     }
 
-    // Método para buscar pets por código de tutor
-    public static void BuscarPet() {
-        System.out.println("Digite codigo do tutor a ser localizado");
+    public static void Buscar() {
+        System.out.println("Digite o código do tutor:");
         System.out.print("> ");
-        String cod = scanner.nextLine();
-
-        while(cod.isEmpty() || cod.matches("[a-zA-Z]+")) {
-            System.out.println("Código inválido! Por favor, digite o código do tutor a ser localizado: ");
-            System.out.print("> ");
-            cod = scanner.nextLine();
-        }
+        int codTutor = Integer.parseInt(scanner.nextLine());
 
         for (Tutor tutor : tutores) {
-            if(tutor.getCodTutor() == Integer.parseInt(cod)) {
-                System.out.println("--- Tutor localizado ---");
+            if (tutor.getCodTutor() == codTutor && !tutor.isDeletado()) {
                 System.out.println(tutor);
                 return;
             }
         }
 
-        System.out.println("--- Tutor não foi localizado ---");
+        System.out.println("Tutor não encontrado.");
     }
 
-    // Método para excluir todos os pets associados a um tutor
-    public static void ExcluirPet() {
-        System.out.println("Digite o código do tutor: ");
+    public static void Excluir() {
+        System.out.println("Digite o código do tutor para excluir:");
         System.out.print("> ");
-        String id = scanner.nextLine();
-
-        while(id.isEmpty() || id.matches("[a-zA-Z]+")){
-            System.out.println("Código de tutor inválido\nPor favor, digite o código do tutor: ");
-            System.out.print("> ");
-            id = scanner.nextLine();
-        }
+        int codTutor = Integer.parseInt(scanner.nextLine());
 
         for (Tutor tutor : tutores) {
-            if(tutor.getCodTutor() == Integer.parseInt(id)) {
-                tutor.RemoveAllPets(); // Remove todos os pets do tutor
-                tutores.remove(tutor); // Remove o tutor da lista de tutores
+            if (tutor.getCodTutor() == codTutor) {
+                tutor.setDeletado(true);
+                salvarDados();
+                System.out.println("Tutor e pets excluídos com sucesso.");
                 return;
             }
         }
 
-        System.out.println("Tutor não encontrado!!!");
+        System.out.println("Tutor não encontrado.");
     }
 
-    // Método para capturar a opção do usuário e executar a ação correspondente
-    public static void ScanOpcao() {
-        String opcao = scanner.nextLine();
-        System.out.println("Opção escolhida: " + opcao);
+    public static void carregarDados() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+            tutores = (ArrayList<Tutor>) ois.readObject();
+            lastid = tutores.size() + 1;
+        } catch (FileNotFoundException e) {
+            System.out.println("Arquivo de dados não encontrado, um novo arquivo será criado.");
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
-        switch(opcao) {
+    public static void salvarDados() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+            oos.writeObject(tutores);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void ScanOpcao() {
+        String opcao = scanner.nextLine().toLowerCase();
+        switch (opcao) {
             case "c":
                 Cadastrar();
                 break;
-
             case "i":
                 ImprimirCadastro();
                 break;
-
             case "b":
-                BuscarPet();
+                Buscar();
                 break;
-
             case "e":
-                ExcluirPet();
+                Excluir();
                 break;
-
             case "x":
-                System.out.println("--- Programa de cadastro encerrado ---");
                 System.exit(0);
                 break;
-
             default:
-                System.out.println("Opção inválida");
-                break;
-          }
+                System.out.println("Opção inválida. Tente novamente.");
+        }
     }
 
-    // Método para popular o cadastro com alguns dados iniciais
     public static void PopularCadastro() {
-        Tutor tuts = new Tutor(lastid, "Maria Antonela", 2000, 12, 12, "R. Bem Ali");
-        tuts.AddPet(new Pet("Bob", "Cachorro"));
-        tuts.AddPet(new Pet("Luna", "Gato"));
-        lastid++;
-
-        Tutor tuts2 = new Tutor(lastid, "Super Marcio", 2000, 06, 10, "R. Bem Longe");
-        tuts2.AddPet(new Pet("Kiara", "Gato"));
-        tuts2.AddPet(new Pet("Priquito", "Papagaio"));
-        lastid++;
-
-        // Adiciona os tutores populados à lista de tutores
-        tutores.add(tuts);
-        tutores.add(tuts2);
+        // Método para popular o cadastro com dados fictícios
+        // Não necessário para este exemplo
     }
 }

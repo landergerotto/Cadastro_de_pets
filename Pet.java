@@ -1,38 +1,50 @@
-import java.util.Scanner;
-import java.util.ArrayList;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.Period;
+import java.io.Serializable;
 
-// Classe que representa um animal de estimação
-public class Pet {
-    // Atributos
-    private String nome; // Nome do animal de estimação
-    private String tipo; // Tipo do animal de estimação (cachorro, gato, etc.)
+public class Pet implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    // Construtor da classe Pet
-    public Pet(String nome, String tipo) {
+    private String nome;
+    private String tipo;
+    private LocalDate nascimento;
+
+    public Pet(String nome, String tipo, LocalDate nascimento) {
         this.nome = nome;
+        this.tipo = tipo;
+        this.nascimento = nascimento;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 
-    // Método para obter o nome do animal
-    public String getNome(){
-        return this.nome;
+    public LocalDate getNascimento() {
+        return nascimento;
     }
 
-    // Método para definir um novo nome para o animal
-    public void setNome(String novoNome){
-        this.nome = novoNome;
+    public void setNascimento(LocalDate nascimento) {
+        this.nascimento = nascimento;
     }
 
-    // Método para obter o tipo do animal
-    public String getTipo(){
-        return this.tipo;
+    public int getIdade() {
+        return Period.between(nascimento, LocalDate.now()).getYears();
     }
 
-    // Método para definir um novo tipo para o animal
-    public void setTipo(String novoTipo){
-        this.tipo = novoTipo;
+    @Override
+    public String toString() {
+        return String.format("Nome: %s, Tipo: %s, Idade: %d anos", nome, tipo, getIdade());
     }
 }
