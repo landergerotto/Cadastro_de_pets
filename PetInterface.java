@@ -28,24 +28,19 @@ import javax.swing.JTextField;
 
 public class PetInterface extends JFrame {
 
-    private int largura, altura; // Largura e altura da área útil do frame.
-    private JButton button; // Botão apenas com texto: para gerar os vários botões.
-    private static JTextArea logArea = new JTextArea("", 10, 66); // Area de log.
-    static int sizeLog = 0; // Contador de mensagens do log.
-    private static String arqPet = "Pet.dat"; // O arquivo de dados.
-    // ArrayList para manter o banco de dados na memória.
+    private int largura, altura;
+    private JButton button;
+    private static JTextArea logArea = new JTextArea("", 10, 66);
+    static int sizeLog = 0;
+    private static String arqPet = "Registros.dat";
     private static ArrayList<Pet> pets = new ArrayList<>();
-    // ArrayList para manter os tutores
     private static ArrayList<Tutor> tutores = new ArrayList<>();
-    // Variáveis de formulário
-    private JTextField nomePet, tipoPet, diaPet, mesPet, anoPet, nomeTutor, contatoTutor, diaTutor, mesTutor, anoTutor;
-    // Lista de opções disponibilizadas pelo aplicativo.
-    private static final String[] option = {"Cadastrar", "Imprimir cadastro", "Buscar por nome", "Encerrar"};
+    private JTextField nomeBusca;
+    private static final String[] option = {"Cadastrar", "Imprimir cadastro", "Buscar por código de tutor", "Excluir por código de tutor", "Encerrar"};
     static Font f = new Font("Consolas", Font.PLAIN, 13);
 
-    // *** Criação da interface do aplicativo *******************************
     public PetInterface(int largura, int altura) {
-        super("CADASTRO DE PETS"); // Título do JFrame.
+        super("CADASTRO DE PETS");
         this.largura = largura;
         this.altura = altura;
         setLayout(new FlowLayout());
@@ -55,71 +50,71 @@ public class PetInterface extends JFrame {
         pack();
         BufferedImage imgDecor = null;
         try {
-            File file = new File("pets.jpg"); // Arquivo de imagem (na pasta do aplicativo).
-            FileInputStream fis = new FileInputStream(file); // Cria o fluxo de entrada.
-            imgDecor = ImageIO.read(fis); // Lê imagem do arquivo, colocando na memória (buffer).
+            File file = new File("pets.jpg");
+            FileInputStream fis = new FileInputStream(file);
+            imgDecor = ImageIO.read(fis);
         } catch (IOException ex) {
-            ex.printStackTrace(); // Caso haja problema.
+            ex.printStackTrace();
         }
 
-        ButtonHandler handler = new ButtonHandler(); // ButtonHandler é definido mais abaixo.
-        for (int k = 0; k < 4; k++) {
-            button = new JButton(option[k]); // Cria novo botão.
-            painel.add(button); // Adiciona os botões (plainJButtons) ao JFrame.
-            if (k != 3) // Adiciona o respectivo ouvinte de eventos aos três primeiros
+        ButtonHandler handler = new ButtonHandler();
+        for (int k = 0; k < 5; k++) {
+            button = new JButton(option[k]);
+            painel.add(button);
+            if (k != 4)
                 button.addActionListener(handler);
         }
 
-        button.addActionListener(e -> { // Notaçao lambda para ouvinte de evento.
-            PetInterface.this.dispose(); // Fecha janela.
-            System.exit(0); // Fecha aplicativo.
+        button.addActionListener(e -> {
+            PetInterface.this.dispose();
+            System.exit(0);
         });
 
-        painel.add(new JLabel("Log de ações realizadas na sessão.")); // Título da caixa
-        Box box = Box.createHorizontalBox(); // Cria uma caixa.
-        logArea.setFont(f); // Define a fonte da área de log.
-        logArea.setEditable(false); // Trava a edição dessa área.
-        box.add(new JScrollPane(logArea)); // Insere a área de log num painel com rolamento.
-        painel.add(box); // Adiciona a caixa ao painel.
+        painel.add(new JLabel("Log de ações realizadas na sessão."));
+        Box box = Box.createHorizontalBox();
+        logArea.setFont(f);
+        logArea.setEditable(false);
+        box.add(new JScrollPane(logArea));
+        painel.add(box);
 
-        JPanel decor = new JPanel(); // Cria o painel que conterá a imagem decorativa.
-        decor.setLayout(new FlowLayout()); // Define layout automático.
-        JLabel imgLabel = new JLabel(new ImageIcon(imgDecor)); // JLabel com imagem.
-        decor.add(imgLabel); // Adicional JLabel com imagem ao painel.
-        painel.add(decor); // Adiciona o outro painel ao painel principal.
+        JPanel decor = new JPanel();
+        decor.setLayout(new FlowLayout());
+        JLabel imgLabel = new JLabel(new ImageIcon(imgDecor));
+        decor.add(imgLabel);
+        painel.add(decor);
 
-        recuperaPets(); // Recupera dados do arquivo, se pré-existente.
+        recuperaPets();
     }
 
-    // Classe interna para tratamento de evento de botão
     private class ButtonHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
             if (event.getActionCommand().equals(option[0])) {
-                cadastrar(); // Chama método para cadastramento.
+                cadastrar();
             }
             if (event.getActionCommand().equals(option[1])) {
-                imprimirCadastro(); // Chama método para impressão.
+                imprimirCadastro();
             }
             if (event.getActionCommand().equals(option[2])) {
-                buscaPet(); // Chama método para busca.
+                buscaPorCodigoTutor();
+            }
+            if (event.getActionCommand().equals(option[3])) {
+                excluiTutor();
             }
         }
     }
 
-    // Método para escrever na área de log.
     public static void writeLog(String s) {
-        if (sizeLog == 0) // Aviso de criação do log.
+        if (sizeLog == 0)
             logArea.append("LOG CRIADO...");
-        else { // Adição de novas ações.
+        else {
             logArea.append("\n");
             logArea.append("- " + s);
         }
         sizeLog++;
     }
 
-    // *** Cadastramento ****************************************************
-    private void cadastrar() { // Usa um objeto cadastrarFrame (abaixo).
+    private void cadastrar() {
         cadastrarFrame cf = new cadastrarFrame();
         cf.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         cf.setSize(largura - 45, 300);
@@ -133,34 +128,34 @@ public class PetInterface extends JFrame {
         public cadastrarFrame() {
             setLayout(new FlowLayout(FlowLayout.LEADING));
             add(new JLabel("Nome do Pet"));
-            nomePet = new JTextField("", 20);
+            JTextField nomePet = new JTextField("", 20);
             add(nomePet);
             add(new JLabel("Tipo do Pet"));
-            tipoPet = new JTextField("", 20);
+            JTextField tipoPet = new JTextField("", 20);
             add(tipoPet);
             add(new JLabel("Data de Nascimento do Pet (dd/mm/aaaa)"));
-            diaPet = new JTextField(2);
+            JTextField diaPet = new JTextField(2);
             add(diaPet);
             add(new JLabel("/"));
-            mesPet = new JTextField(2);
+            JTextField mesPet = new JTextField(2);
             add(mesPet);
             add(new JLabel("/"));
-            anoPet = new JTextField(4);
+            JTextField anoPet = new JTextField(4);
             add(anoPet);
             add(new JLabel("Nome do Tutor"));
-            nomeTutor = new JTextField("", 20);
+            JTextField nomeTutor = new JTextField("", 20);
             add(nomeTutor);
             add(new JLabel("Data de Nascimento do Tutor (dd/mm/aaaa)"));
-            diaTutor = new JTextField(2);
+            JTextField diaTutor = new JTextField(2);
             add(diaTutor);
             add(new JLabel("/"));
-            mesTutor = new JTextField(2);
+            JTextField mesTutor = new JTextField(2);
             add(mesTutor);
             add(new JLabel("/"));
-            anoTutor = new JTextField(4);
+            JTextField anoTutor = new JTextField(4);
             add(anoTutor);
             add(new JLabel("Contato do Tutor"));
-            contatoTutor = new JTextField("", 20);
+            JTextField contatoTutor = new JTextField("", 20);
             add(contatoTutor);
             ok = new JButton("Cadastrar");
             add(ok);
@@ -212,7 +207,6 @@ public class PetInterface extends JFrame {
         }
     }
 
-    // *** Recuperação dos dados do arquivo *********************************
     private static void recuperaPets() {
         ObjectInputStream inputStream = null;
         try {
@@ -243,7 +237,6 @@ public class PetInterface extends JFrame {
         }
     }
 
-    // *** Gravação dos dados no arquivo ************************************
     private static void gravaPets() {
         ObjectOutputStream outputStream = null;
         try {
@@ -254,7 +247,6 @@ public class PetInterface extends JFrame {
             for (Tutor tutor : tutores) {
                 outputStream.writeObject(tutor);
             }
-            writeLog("Arquivo atualizado: " + pets.size() + " cadastros.");
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
@@ -266,51 +258,17 @@ public class PetInterface extends JFrame {
         }
     }
 
-    // *** Busca de cadastro de pet *****************************************
-    private void buscaPet() {
-        String busca = JOptionPane.showInputDialog(this, "Nome do pet: ");
-        if (busca == null || busca.length() == 0) {
-            JOptionPane.showMessageDialog(this, "Nome não fornecido!");
-            return;
-        }
-        for (Pet pet : pets) {
-            if (pet.getNome().equalsIgnoreCase(busca)) {
-                Tutor tutor = findTutor(pet);
-                String msg = String.format("Pet encontrado: %s, Tipo: %s, Nascimento: %s, Tutor: %s, Nascimento: %s, Contato: %s.",
-                        pet.getNome(), pet.getTipo(), pet.getNascimento().toString(), tutor.getNome(), tutor.getNascimento().toString(), tutor.getContato());
-                JOptionPane.showMessageDialog(this, msg);
-                writeLog(msg);
-                return;
-            }
-        }
-        JOptionPane.showMessageDialog(this, "Pet não encontrado!");
-    }
-
-    // Método auxiliar para encontrar o tutor de um pet
-    private Tutor findTutor(Pet pet) {
-        for (Tutor tutor : tutores) {
-            if (tutor.getPet().equals(pet)) {
-                return tutor;
-            }
-        }
-        return null; // Caso não encontre o tutor
-    }
-
-    // *** Impressão do cadastro de pets ************************************
     private void imprimirCadastro() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%-15s %-15s %-15s %-15s %-15s %-15s %-15s %-15s\n", "Nome Pet", "Tipo Pet", "Nascimento Pet", "Idade Pet", "Nome Tutor", "Nascimento Tutor", "Idade Tutor", "Contato Tutor"));
+        sb.append(String.format("%-20s %-20s %-20s %-20s %-20s %-20s %-20s %-20s %-20s\n", "Nome Pet", "Tipo Pet", "Nascimento Pet", "Idade Pet", "Cod. Tutor", "Nome Tutor", "Nascimento Tutor", "Idade Tutor", "Contato Tutor"));
         for (Pet pet : pets) {
             Tutor tutor = findTutor(pet);
-            if (tutor.isDeletado)
-                continue;
-
-            if (tutor != null) {
-                sb.append(String.format("%-15s %-15s %-15s %-15d %-15s %-15s %-15d %-15s\n",
-                        pet.getNome(), pet.getTipo(), pet.getNascimento().toString(), pet.getIdade(), tutor.getNome(), tutor.getNascimento().toString(), tutor.getIdade(), tutor.getContato()));
+            if (tutor != null && !tutor.isDeletado()) {
+                sb.append(String.format("%-20s %-20s %-20s %-20d %-20s %-20s %-20s %-20d %-20s\n",
+                        pet.getNome(), pet.getTipo(), pet.getNascimento().toString(), pet.getIdade(), tutor.getCodTutor(), tutor.getNome(), tutor.getNascimento().toString(), tutor.getIdade(), tutor.getContato()));
             } else {
-                sb.append(String.format("%-15s %-15s %-15s %-15d %-15s %-15s %-15s %-15s\n",
-                        pet.getNome(), pet.getTipo(), pet.getNascimento().toString(), pet.getIdade(), "N/A", "N/A", "N/A", "N/A"));
+                sb.append(String.format("%-20s %-20s %-20s %-20d %-20s %-20s %-20s %-20s %-20s\n",
+                        pet.getNome(), pet.getTipo(), pet.getNascimento().toString(), pet.getIdade(), "N/A", "N/A", "N/A", "N/A", "N/A"));
             }
         }
         JTextArea area = new JTextArea(sb.toString());
@@ -319,12 +277,69 @@ public class PetInterface extends JFrame {
         writeLog("Impressão do cadastro de pets.");
     }
 
+    private void buscaPorCodigoTutor() {
+        String codTutorStr = JOptionPane.showInputDialog(this, "Código do tutor: ");
+        if (codTutorStr == null || codTutorStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Código do tutor não fornecido!");
+            return;
+        }
+        int codTutor;
+        try {
+            codTutor = Integer.parseInt(codTutorStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Código do tutor inválido!");
+            return;
+        }
+        for (Tutor tutor : tutores) {
+            if (tutor.getCodTutor() == codTutor) {
+                Pet pet = tutor.getPet();
+                String msg = String.format("Tutor encontrado: %s, Tipo: %s, Nascimento: %s, Tutor: %s, Nascimento: %s, Contato: %s.",
+                        pet.getNome(), pet.getTipo(), pet.getNascimento().toString(), tutor.getNome(), tutor.getNascimento().toString(), tutor.getContato());
+                JOptionPane.showMessageDialog(this, msg);
+                writeLog(msg);
+                return;
+            }
+        }
+        JOptionPane.showMessageDialog(this, "Tutor não encontrado!");
+    }
 
-    // *** Main: instanciando a aplicação ******************************
-    public static void main(String[] args) {
-        PetInterface petApp = new PetInterface(800, 600);
-        petApp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        petApp.setLocationRelativeTo(null);
-        petApp.setVisible(true);
+    private void excluiTutor() {
+        String codTutorStr = JOptionPane.showInputDialog(this, "Código do tutor: ");
+        if (codTutorStr == null || codTutorStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Código do tutor não fornecido!");
+            return;
+        }
+        int codTutor;
+        try {
+            codTutor = Integer.parseInt(codTutorStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Código do tutor inválido!");
+            return;
+        }
+        for (Tutor tutor : tutores) {
+            if (tutor.getCodTutor() == codTutor) {
+                tutor.setDeletado(true);
+                for (Pet pet : pets) {
+                    if (pet.getNome().equals(tutor.getPet().getNome())) {
+                        pets.remove(pet);
+                        break;
+                    }
+                }
+                gravaPets(); // Atualiza o arquivo.
+                JOptionPane.showMessageDialog(this, "Tutor e pets excluídos com sucesso!");
+                writeLog("Tutor e pets excluídos: " + tutor);
+                return;
+            }
+        }
+        JOptionPane.showMessageDialog(this, "Tutor não encontrado!");
+    }
+
+    private Tutor findTutor(Pet pet) {
+        for (Tutor tutor : tutores) {
+            if (tutor.getPet().equals(pet)) {
+                return tutor;
+            }
+        }
+        return null;
     }
 }

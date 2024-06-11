@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.Period;
 
 public class Tutor implements Serializable {
-    private static int proximoCodigo = 0;
+    private static int proximoCodigo = 1;
     private static final long serialVersionUID = 1L;
 
     private int codTutor;
