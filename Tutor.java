@@ -1,15 +1,19 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.io.Serializable;
+import java.time.Period;
 
 public class Tutor implements Serializable {
+    private static int proximoCodigo = 0;
     private static final long serialVersionUID = 1L;
 
     private int codTutor;
     private String nome;
     private LocalDate nascimento;
+    private String contato;
     private String endereco;
     private ArrayList<Pet> pets;
+    private Pet pet;
     private boolean deletado;
 
     public Tutor(int codTutor, String nome, LocalDate nascimento, String endereco) {
@@ -23,6 +27,16 @@ public class Tutor implements Serializable {
 
     public Tutor(int codTutor, String nome, int yyyy, int mm, int dd, String endereco) {
         this(codTutor, nome, LocalDate.of(yyyy, mm, dd), endereco);
+        this.codTutor = gerarCodigo();
+    }
+
+    public Tutor(String nome, LocalDate nascimento, String contato, Pet pet) {
+        this.nome = nome;
+        this.contato = contato;
+        this.nascimento = nascimento;
+        this.pet = pet;
+        this.deletado = false;
+        this.codTutor = gerarCodigo();
     }
 
     public int getCodTutor() {
@@ -51,6 +65,11 @@ public class Tutor implements Serializable {
 
     public void setNascimento(int yyyy, int mm, int dd) {
         this.nascimento = LocalDate.of(yyyy, mm, dd);
+    }
+
+    public int getIdade() {
+        LocalDate dataAtual = LocalDate.now();
+        return Period.between(this.nascimento, dataAtual).getYears();
     }
 
     public String getEndereco() {
@@ -87,6 +106,18 @@ public class Tutor implements Serializable {
 
     public void setDeletado(boolean deletado) {
         this.deletado = deletado;
+    }
+
+    public String getContato() {
+        return contato;
+    }
+
+    public Pet getPet() {
+        return pet;
+    }
+
+    private static Integer gerarCodigo() {
+        return proximoCodigo++;
     }
 
     @Override
