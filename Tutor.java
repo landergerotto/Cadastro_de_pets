@@ -4,13 +4,11 @@ import java.io.Serializable;
 import java.time.Period;
 
 public class Tutor implements Serializable {
-    private static int proximoCodigo = 1;
     private static final long serialVersionUID = 1L;
 
     private int codTutor;
     private String nome;
     private LocalDate nascimento;
-    private String contato;
     private String endereco;
     private ArrayList<Pet> pets;
     private Pet pet;
@@ -27,16 +25,15 @@ public class Tutor implements Serializable {
 
     public Tutor(int codTutor, String nome, int yyyy, int mm, int dd, String endereco) {
         this(codTutor, nome, LocalDate.of(yyyy, mm, dd), endereco);
-        this.codTutor = gerarCodigo();
     }
 
-    public Tutor(String nome, LocalDate nascimento, String contato, Pet pet) {
+    public Tutor(int codTutor, String nome, LocalDate nascimento, String endereco, Pet pet) {
+        this.codTutor = codTutor;
         this.nome = nome;
-        this.contato = contato;
+        this.endereco = endereco;
         this.nascimento = nascimento;
         this.pet = pet;
         this.deletado = false;
-        this.codTutor = gerarCodigo();
     }
 
     public int getCodTutor() {
@@ -108,18 +105,9 @@ public class Tutor implements Serializable {
         this.deletado = deletado;
     }
 
-    public String getContato() {
-        return contato;
-    }
-
     public Pet getPet() {
         return pet;
     }
-
-    private static Integer gerarCodigo() {
-        return proximoCodigo++;
-    }
-
     @Override
     public String toString() {
         String cod = String.format("Cod. do tutor: %d\n", this.codTutor);  

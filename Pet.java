@@ -3,6 +3,7 @@ import java.time.Period;
 import java.io.Serializable;
 
 public class Pet implements Serializable {
+    // não sei o pq disso mas sem isso não roda corretamente
     private static final long serialVersionUID = 1L;
 
     private String nome;

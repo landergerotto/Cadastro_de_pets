@@ -35,7 +35,6 @@ public class PetInterface extends JFrame {
     private static String arqPet = "Registros.dat";
     private static ArrayList<Pet> pets = new ArrayList<>();
     private static ArrayList<Tutor> tutores = new ArrayList<>();
-    private JTextField nomeBusca;
     private static final String[] option = {"Cadastrar", "Imprimir cadastro", "Buscar por código de tutor", "Excluir por código de tutor", "Encerrar"};
     static Font f = new Font("Consolas", Font.PLAIN, 13);
 
@@ -154,9 +153,9 @@ public class PetInterface extends JFrame {
             add(new JLabel("/"));
             JTextField anoTutor = new JTextField(4);
             add(anoTutor);
-            add(new JLabel("Contato do Tutor"));
-            JTextField contatoTutor = new JTextField("", 20);
-            add(contatoTutor);
+            add(new JLabel("Endereço do Tutor"));
+            JTextField enderecoTutor = new JTextField("", 20);
+            add(enderecoTutor);
             ok = new JButton("Cadastrar");
             add(ok);
 
@@ -170,11 +169,11 @@ public class PetInterface extends JFrame {
                 String dTutor = diaTutor.getText();
                 String mTutor = mesTutor.getText();
                 String aTutor = anoTutor.getText();
-                String cTutor = contatoTutor.getText();
+                String eTutor = enderecoTutor.getText();
                 int DPet = 0, MPet = 0, APet = 0, DTutor = 0, MTutor = 0, ATutor = 0;
 
                 if (nPet.length() == 0 || tPet.length() == 0 || dPet.length() == 0 || mPet.length() == 0 || aPet.length() == 0 ||
-                    nTutor.length() == 0 || dTutor.length() == 0 || mTutor.length() == 0 || aTutor.length() == 0 || cTutor.length() == 0) {
+                    nTutor.length() == 0 || dTutor.length() == 0 || mTutor.length() == 0 || aTutor.length() == 0 || eTutor.length() == 0) {
                     JOptionPane.showMessageDialog(null, "Informação incompleta!");
                     return;
                 }
@@ -195,10 +194,10 @@ public class PetInterface extends JFrame {
                 LocalDate nascTutor = LocalDate.of(ATutor, MTutor, DTutor);
                 Pet pet = new Pet(nPet, tPet, nascPet);
                 pets.add(pet);
-                Tutor tutor = new Tutor(nTutor, nascTutor, cTutor, pet);
+                Tutor tutor = new Tutor(tutores.size() + 1, nTutor, nascTutor, eTutor, pet);
                 tutores.add(tutor);
-                String msg = String.format("Pet cadastrado: %s, Tipo: %s, Nascimento: %s, Tutor: %s, Nascimento: %s, Contato: %s.",
-                        nPet, tPet, nascPet.toString(), nTutor, nascTutor.toString(), cTutor);
+                String msg = String.format("Pet cadastrado: %s, Tipo: %s, Nascimento: %s, Tutor: %s, Nascimento: %s, Endereço: %s.",
+                        nPet, tPet, nascPet.toString(), nTutor, nascTutor.toString(), eTutor);
                 writeLog(msg);
                 gravaPets(); // Atualiza o arquivo.
                 JOptionPane.showMessageDialog(null, "Pet cadastrado com sucesso!");
@@ -260,12 +259,12 @@ public class PetInterface extends JFrame {
 
     private void imprimirCadastro() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%-20s %-20s %-20s %-20s %-20s %-20s %-20s %-20s %-20s\n", "Nome Pet", "Tipo Pet", "Nascimento Pet", "Idade Pet", "Cod. Tutor", "Nome Tutor", "Nascimento Tutor", "Idade Tutor", "Contato Tutor"));
+        sb.append(String.format("%-20s %-20s %-20s %-20s %-20s %-20s %-20s %-20s %-20s\n", "Nome Pet", "Tipo Pet", "Nascimento Pet", "Idade Pet", "Cod. Tutor", "Nome Tutor", "Nascimento Tutor", "Idade Tutor", "Endereço Tutor"));
         for (Pet pet : pets) {
             Tutor tutor = findTutor(pet);
             if (tutor != null && !tutor.isDeletado()) {
                 sb.append(String.format("%-20s %-20s %-20s %-20d %-20s %-20s %-20s %-20d %-20s\n",
-                        pet.getNome(), pet.getTipo(), pet.getNascimento().toString(), pet.getIdade(), tutor.getCodTutor(), tutor.getNome(), tutor.getNascimento().toString(), tutor.getIdade(), tutor.getContato()));
+                        pet.getNome(), pet.getTipo(), pet.getNascimento().toString(), pet.getIdade(), tutor.getCodTutor(), tutor.getNome(), tutor.getNascimento().toString(), tutor.getIdade(), tutor.getEndereco()));
             } else {
                 sb.append(String.format("%-20s %-20s %-20s %-20d %-20s %-20s %-20s %-20s %-20s\n",
                         pet.getNome(), pet.getTipo(), pet.getNascimento().toString(), pet.getIdade(), "N/A", "N/A", "N/A", "N/A", "N/A"));
@@ -293,8 +292,8 @@ public class PetInterface extends JFrame {
         for (Tutor tutor : tutores) {
             if (tutor.getCodTutor() == codTutor) {
                 Pet pet = tutor.getPet();
-                String msg = String.format("Tutor encontrado: %s, Tipo: %s, Nascimento: %s, Tutor: %s, Nascimento: %s, Contato: %s.",
-                        pet.getNome(), pet.getTipo(), pet.getNascimento().toString(), tutor.getNome(), tutor.getNascimento().toString(), tutor.getContato());
+                String msg = String.format("Tutor encontrado: %s, Tipo: %s, Nascimento: %s, Tutor: %s, Nascimento: %s, Endereço: %s.",
+                        pet.getNome(), pet.getTipo(), pet.getNascimento().toString(), tutor.getNome(), tutor.getNascimento().toString(), tutor.getEndereco());
                 JOptionPane.showMessageDialog(this, msg);
                 writeLog(msg);
                 return;
